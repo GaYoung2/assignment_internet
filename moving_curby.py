@@ -7,7 +7,7 @@ pygame.font.init()
 
 padWidth = 500
 padHeight = 500
-monsterimage = ["pyshooting/rock01.png","pyshooting/rock02.png"]
+monsterimage = ["images/rock01.png","images/rock02.png"]
 GRAY =(100,100,100)
 background_width = 500
 
@@ -23,10 +23,10 @@ def initGame():
     global gamePad,clock,background,curby,background2
     pygame.init()
     gamePad = pygame.display.set_mode((padWidth,padHeight))
-    pygame.display.set_caption('PyShooting')
-    background =pygame.image.load("pyshooting/karbybackground2.png").convert_alpha()
+    pygame.display.set_caption('Curby')
+    background =pygame.image.load("images/karbybackground2.png").convert_alpha()
     background2 = background.copy()
-    curby = pygame.image.load("pyshooting/fighter.png").convert_alpha()
+    curby = pygame.image.load("images/fighter.png").convert_alpha()
     clock = pygame.time.Clock()
 
 
