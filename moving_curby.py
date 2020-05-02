@@ -24,7 +24,7 @@ def initGame():
     pygame.init()
     gamePad = pygame.display.set_mode((padWidth,padHeight))
     pygame.display.set_caption('PyShooting')
-    background =pygame.image.load("pyshooting/background.png").convert_alpha()
+    background =pygame.image.load("pyshooting/karbybackground2.png").convert_alpha()
     background2 = background.copy()
     curby = pygame.image.load("pyshooting/fighter.png").convert_alpha()
     clock = pygame.time.Clock()
