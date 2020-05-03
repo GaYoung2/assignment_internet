@@ -11,7 +11,7 @@ class ITEM():
         self.image = pygame.transform.scale(self.image, self.size)
         self.pos_x = 1000
         self.pos_y = 250
-        self.speed = 10
+        self.speed = 5
         self.hitbox = (self.pos_x,self.pos_y,self.size[0],self.size[1])
 
     def update(self):
