@@ -1,15 +1,15 @@
 import pygame
 #여기에 fire
-fire_attack=[pygame.image.load('images/fire_attack1.png'),
-             pygame.image.load('images/fire_attack2.png'),
-             pygame.image.load('images/fire_attack3.png')]
+fire_attack=[pygame.image.load('images/fire.png'),
+             pygame.image.load('images/fire.png'),
+             pygame.image.load('images/fire.png')]
 
 class Attack:
-    def __init__(self,x,y):
+    def __init__(self,x,y,speed):
         super(Attack, self).__init__()
         self.size = [4,4]
         self.height = 4
-        self.speed = 7
+        self.speed = speed
         self.x=x
         self.y=y
         self.image_type=[]
@@ -18,7 +18,6 @@ class Attack:
 
     # item에서 불,스파크 아이템 먹으면 해당 스킬 사용 지정
     def attack_type(self, type):
-        print(type)
         if type == 1:
             self.image_type=fire_attack
 

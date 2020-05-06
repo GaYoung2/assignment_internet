@@ -1,5 +1,6 @@
 import pygame
-import player, map, enemy,attack,items,startscreen,random
+import player, map, enemy,attack,items,random,music
+import music
 padWidth = 1000
 padHeight = 500
 
@@ -8,12 +9,13 @@ class game:
         self.gamePad = pygame.display.set_mode((padWidth,padHeight))
         pygame.display.set_caption('Kirby')
         #curby = pygame.image.load("images/fighter.png").convert_alpha()
+        self.font = pygame.font.Font("font/KirbyL.ttf", 50)
         self.clock = pygame.time.Clock()
         self.user = player.kirby()
         self.ground = map.BACKGROUND()
         self.game_state=True
         self.attacks=[]
-        self.f_s_acctack=attack.Attack(self.user.pos_x+40,self.user.pos_y+20) #atteck class객체를 받아옴(x좌표,y좌표)
+        self.f_s_acctack=attack.Attack(self.user.pos_x+40,self.user.pos_y+20,10) #atteck class객체를 받아옴(x좌표,y좌표)
         self.item_eat=0 
         self.moncount = 1
         self.monsterheight = [(1000,400),(1000,200)]
@@ -23,7 +25,12 @@ class game:
         self.score = 0
         self.itempresent = 0
         self.item = items.ITEM()
-        
+        self.levelup = self.font.render("LEVELUP",1,(255,0,0))
+        self.levelupcount = 11
+        self.sound=music.MUSIC()
+    
+
+    
     def itemmake(self):
         self.item = items.ITEM()
     def itemcall(self):
@@ -38,13 +45,15 @@ class game:
             self.f_s_acctack.attack_type(type=1) #fire스킬**로 설정해줌
             self.user.eat_item = 'f' #이미지 받아올때 이미지 이름이 f이다.
             self.item_eat +=1  #
+            self.levelupcount = 10
 
     def start(self):
         #crashed = False
         #mon = enemy.MONSTER()
         #item = items.ITEM()
+        self.sound.mplay(0)
         while self.game_state:
-            if(self.moncount > 50):
+            if(self.moncount > 30):
                 return 0
             if(self.heart < 1):
                 return 0
@@ -58,6 +67,11 @@ class game:
             self.user.walk(self.ground) #유저 업데이트
             self.user.update() #유저 점프
             self.user.draw(self.gamePad) #화면에 유저모습 출력
+            text = self.font.render("Score : %d"%(self.score),1,(50,50,50))
+            text2 = self.font.render("Heart : %d"%(self.heart),1,(50,50,50))
+            self.gamePad.blit(text,(0,0))
+            self.gamePad.blit(text2,(750,0))
+
 
             if self.user.collision(self.mon.hitbox):  #커비랑 몬스터랑 충돌했을때 돌아감.
                 self.mon.pos_x -= padWidth  
@@ -68,17 +82,24 @@ class game:
                 if(self.moncount <10):
                     self.mon = enemy.MONSTER(random.choice(self.monsterheight),10)   #몬스터가 화면에서 없어지면 새 몬스터 출발
                 if(10<=self.moncount<20):
-                    if(self.moncount%10 == 0 or self.moncount%10 == 1):
-                        self.mon = enemy.MONSTER((1000,200),20)   #몬스터가 화면에서 없어지면 새 몬스터 출발
+                    if(self.moncount==10):
+                        self.mon = enemy.MONSTER((1000,200),20)
+                    if(self.moncount==11):
+                        self.mon = enemy.MONSTER((1000,200),20)
+                    if(self.moncount==12):
+                        self.mon = enemy.MONSTER((1000,200),20)
                     else:
                         self.mon = enemy.MONSTER(random.choice(self.monsterheight),20)   #몬스터가 화면에서 없어지면 새 몬스터 출발
                 if(20<=self.moncount):
-                    if(self.moncount%10 == 0 or self.moncount%10 == 1):
-                        self.mon = enemy.MONSTER((1000,200),30)   #몬스터가 화면에서 없어지면 새 몬스터 출발
+                    if(self.moncount==20):
+                        self.mon = enemy.MONSTER((1000,200),30)
+                    if(self.moncount==21):
+                        self.mon = enemy.MONSTER((1000,200),30)
+                    if(self.moncount==23):
+                        self.mon = enemy.MONSTER((1000,200),20)
                     else:
                         self.mon = enemy.MONSTER(random.choice(self.monsterheight),30)   #몬스터가 화면에서 없어지면 새 몬스터 출발
                 self.moncount +=1
-                print(self.moncount)
 
             self.mon.update()    #몬스터 상태 업데이트
             self.mon.draw(self.gamePad)  #화면에 몬스터 모습 출력
@@ -102,9 +123,11 @@ class game:
 
             self.item.update()
             self.item.draw(self.gamePad)
+            if(0<self.levelupcount<11):
+                self.gamePad.blit(self.levelup,(450,0))
+                self.levelupcount -=1
+
             
-        
-                
             if self.itemuse == 1:
                 if self.f_s_acctack.collision(self.mon.hitbox):  #불꽃이랑 몬스터랑 충돌했을때 돌아감.
                     self.mon.pos_x -= padWidth 
@@ -120,7 +143,7 @@ class game:
                     if i.x > padWidth: self.attacks.remove(i)           
             pygame.display.update()
             self.clock.tick(30)
-        if heart<1:
+        if self.heart<1:
             return 0
         else:
             return 1
@@ -150,6 +173,7 @@ class game:
                 if key_event[pygame.K_SPACE]:
                     self.user.isJump = True
                     self.user.walkCount = 0
+                    pygame.mixer.Sound.play(self.sound.jump)
                     
             if key_event[pygame.K_a]: #key a를 누르면 불꽃 나감
                 if self.item_eat != 0: #item을 먹으면 불꽃
@@ -158,5 +182,6 @@ class game:
                         self.f_s_acctack.x=self.user.pos_x + 37
                         self.f_s_acctack.y=self.user.pos_y + 30
                         self.attacks.append(self.f_s_acctack)
+                        pygame.mixer.Sound.play(self.sound.fire)
                 else: pass
 
